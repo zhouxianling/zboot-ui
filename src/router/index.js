@@ -11,6 +11,7 @@ import Layout from '../views/layout/Layout'
 
 /* Router Modules */
 import home from './modules/home'; //主页
+import setting from './modules/setting'; //系统设置
 
 
 /* 所有权限通用路由表 如首页和登录页和一些不用权限的公用页面*/
@@ -29,7 +30,8 @@ export const constantRouterMap = [
       component: () => import('@/views/dashboard/index')
     }]
   },
-  home,//主页
+  home,
+  setting,
 ]
 
 

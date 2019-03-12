@@ -4,7 +4,7 @@ import config from '../../config'
 export const url = `${config.dev.proxyTable.target}`;
 
 /* api接口地址*/
-export const apiUrl = `${url}/api`;
+export const apiUrl = url + `/api`;
 
 
 

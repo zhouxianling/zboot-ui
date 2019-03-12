@@ -76,3 +76,23 @@ a:hover {
 .app-container {
   padding: 20px;
 }
+
+//过滤条件的样式
+.filter-container {
+  padding-bottom: 8px;
+  .filter-item {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  .search-input {
+    width: 200px;
+  }
+}
+
+//分页插件的样式
+.pagination-container {
+  margin-top: 30px;
+  text-align: right;
+}
+
+

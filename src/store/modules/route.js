@@ -5,7 +5,9 @@ const route = {
     state: {
         routers: [],
     },
-    getters: {},
+    getters: {
+
+    },
     mutations: {
         setRoute(state) {
             state.routers = handleMenu(getMenu());//动态路由

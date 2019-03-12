@@ -29,22 +29,21 @@ const user = {
     Login({commit}, userInfo) {
       const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
-        login(username, userInfo.password).then(response => {
-          const data = response.data
-          console.log(data)
-          setToken(data.token)
-          commit('SET_TOKEN', data.token)
-          setMenu(data.menus);
-          setUser(data);
-          resolve(data)
-        }).catch(error => {
+        login(username, userInfo.password)
+          .then(response => {
+            commit('SET_TOKEN', response.token)
+            setToken(response.token)
+            setMenu(response.menus);
+            setUser(response);
+            resolve(response)
+          }).catch(error => {
           reject(error)
         })
       })
     },
 
     // 登出
-    LogOut ({commit, state}) {
+    LogOut({commit, state}) {
       return new Promise((resolve, reject) => {
         commit('SET_TOKEN', '');
         commit('SET_ROLES', []);
