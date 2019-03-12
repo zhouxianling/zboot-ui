@@ -11,8 +11,12 @@
       <el-button class="filter-item"
                  type="primary"
                  icon="el-icon-search"
-                 @click="searchData">
-        搜索
+                 @click="searchData">搜索
+      </el-button>
+
+      <el-button class="add"
+                 type="primary"
+                 @click="add">添加
       </el-button>
     </div>
 
@@ -88,6 +92,7 @@
   import {getList} from '@/api/sys/userApi'
 
   export default {
+    components: {},
     data() {
       return {
         search: {
@@ -138,6 +143,10 @@
 
       },
       delete(item) {
+
+      },
+      //新增
+      add() {
 
       }
 

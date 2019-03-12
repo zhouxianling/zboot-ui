@@ -10,7 +10,7 @@ Vue.use(Router)
 import Layout from '../views/layout/Layout'
 
 /* Router Modules */
-import home from './modules/home'; //主页
+import dashboard from './modules/dashboard'; //主页
 import setting from './modules/setting'; //系统设置
 
 
@@ -20,18 +20,22 @@ export const constantRouterMap = [
   {path: '/404', component: () => import('@/views/404'), hidden: true},
 
   {
-    path: '/',
+    path: '/home',
     component: Layout,
-    redirect: '/dashboard',
-    name: 'dashboard',
-    hidden: true,
+    redirect: '/home/index',
     children: [{
-      path: 'dashboard',
-      component: () => import('@/views/dashboard/index')
-    }]
+      path: 'index',
+      component: () => import('@/views/dashboard/index'),
+      name: 'home',
+      meta: {title: '首页', icon: 'user'},
+    },
+    ]
   },
-  home,
+  dashboard,
   setting,
+
+  {path: '*', redirect: '/dashboard/index', hidden: true},
+
 ]
 
 

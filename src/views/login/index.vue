@@ -90,7 +90,7 @@
             this.$store.dispatch('Login', this.loginForm).then(() => {
               this.loading = false
               this.$message.success('登录成功.');
-              this.$router.push({ name:'home' })
+              this.$router.push({ name:'dashboard' })
             }).catch(err => {
               this.loading = false
               this.$message.error(err); //登录失败提示错误
