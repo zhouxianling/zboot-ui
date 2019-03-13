@@ -10,14 +10,37 @@ Vue.use(Router)
 import Layout from '../views/layout/Layout'
 
 /* Router Modules */
-import dashboard from './modules/dashboard'; //主页
-import setting from './modules/setting'; //系统设置
+import home from './modules/home';
+import setting from './modules/setting';
+import paper from './modules/paper';
+import analysis from './modules/analysis';
+import question from './modules/question';
 
 
 /* 所有权限通用路由表 如首页和登录页和一些不用权限的公用页面*/
 export const constantRouterMap = [
-  {path: '/login', component: () => import('@/views/login/index'), hidden: true},
-  {path: '/404', component: () => import('@/views/404'), hidden: true},
+  {
+    path: '/redirect',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '/redirect/:path*',
+        component: () => import('@/views/redirect/index')
+      }
+    ]
+  },
+
+  {
+    path: '/login',
+    component: () => import('@/views/login/index')
+    , hidden: true
+  },
+  {
+    path: '/404',
+    component: () => import('@/views/404'),
+    hidden: true
+  },
 
   {
     path: '/home',
@@ -25,16 +48,18 @@ export const constantRouterMap = [
     redirect: '/home/index',
     children: [{
       path: 'index',
-      component: () => import('@/views/dashboard/index'),
+      component: () => import('@/views/home/index'),
       name: 'home',
       meta: {title: '首页', icon: 'user'},
     },
     ]
   },
-  dashboard,
+  home,
   setting,
-
-  {path: '*', redirect: '/dashboard/index', hidden: true},
+  question,
+  analysis,
+  paper,
+  {path: '*', redirect: '/home/index', hidden: true},
 
 ]
 

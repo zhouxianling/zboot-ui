@@ -26,27 +26,24 @@
               style="width: 100%">
 
       <el-table-column prop="createTime"
-                       label="添加日期">
+                       label="创建时间">
       </el-table-column>
 
-      <el-table-column prop="username"
-                       label="账号">
+
+      <el-table-column prop="roleName"
+                       label="名称">
       </el-table-column>
 
-      <el-table-column prop="realName"
-                       label="真实姓名">
+      <el-table-column prop="roleCode"
+                       label="编号">
       </el-table-column>
 
-      <el-table-column prop="phone"
-                       label="电话">
+      <el-table-column prop="roleDesc"
+                       label="描述">
       </el-table-column>
 
-      <el-table-column prop="dept"
-                       label="部门">
-      </el-table-column>
-
-      <el-table-column prop="role"
-                       label="角色">
+      <el-table-column prop="updateTime"
+                       label="更新时间">
       </el-table-column>
 
       <el-table-column
@@ -89,18 +86,16 @@
 
 <script>
 
-  import {getList} from '@/api/sys/userApi'
+  import {getList} from '@/api/sys/roleApi'
 
   export default {
-    components: {
-    },
+    components: {},
     data() {
       return {
         search: {
           name: '',
         },
         tableData: [],
-        username: '',
         page: 1,
         size: 16,
         currentPage: 0,
@@ -113,7 +108,7 @@
     methods: {
       requestData() {
         let params = {
-          username: this.search.name,
+          roleName: this.search.name,
           page: this.page,
           size: this.size,
         };

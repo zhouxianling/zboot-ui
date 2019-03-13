@@ -34,7 +34,6 @@
         if (first && first.name !== 'home') {
           matched = [{path: '/home', meta: {title: '首页'}}].concat(matched)
         }
-
         this.levelList = matched
       },
       pathCompile(path) {

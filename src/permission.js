@@ -24,7 +24,7 @@ router.beforeEach((to, from, next) => {
     /* has token*/
     if (to.path === whiteList()[0]) {
       next({path: '/'})
-      NProgress.done() // if current page is dashboard will not trigger	afterEach hook, so manually handle it
+      NProgress.done() // if current page is home will not trigger	afterEach hook, so manually handle it
     } else {
       store.commit('setRoute');
       next();

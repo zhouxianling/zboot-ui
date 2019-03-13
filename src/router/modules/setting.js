@@ -7,10 +7,7 @@ const settingRouter = {
   component: Layout,
   redirect: {name: 'user-management'},
   name: 'setting',
-  meta: {
-    title: '系统设置',
-    icon: 'md-settings'
-  },
+  meta: {title: '系统设置', icon: 'md-settings'},
   children: [
     {
       path: 'user-management',
