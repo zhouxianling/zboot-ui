@@ -9,6 +9,9 @@ export function save(params) {
     url: roleUrl,
     method: 'post',
     data: params,
+    headers: {
+      'Content-Type': 'application/json'
+    }
   })
 }
 

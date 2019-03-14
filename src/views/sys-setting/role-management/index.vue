@@ -3,21 +3,10 @@
   <div class="app-container">
     <!-- 过滤条件 -->
     <div class="filter-container">
-      <el-input class="search-input"
-                placeholder="请输入内容"
-                v-model="search.name"
-                clearable>
-      </el-input>
-      <el-button class="filter-item"
-                 type="primary"
-                 icon="el-icon-search"
-                 @click="searchData">搜索
-      </el-button>
+      <Input v-model="search.name" class="filter-item" placeholder="名称搜索.." clearable style="width: 200px"/>
+      <Button class="filter-item" type="primary" @click="searchData">搜索</Button>
+      <Button class="add" type="primary" @click="add">添加</Button>
 
-      <el-button class="add"
-                 type="primary"
-                 @click="add">添加
-      </el-button>
     </div>
 
 
@@ -81,15 +70,45 @@
       </el-pagination>
     </div>
 
+    <!--    新增和编辑-->
+    <Modal width="40%" v-model="show" :title="mTitle" @on-ok="m_ok" @on-cancel="m_cancel" ok-text="提交">
+      <Form :model="formItem" :label-width="60">
+        <FormItem label="名称">
+          <Input v-model="formItem.roleName" placeholder="请输入..." clearable=""></Input>
+        </FormItem>
+        <FormItem label="编号">
+          <Input v-model="formItem.roleCode" placeholder="请输入..." clearable></Input>
+        </FormItem>
+        <FormItem label="描述">
+          <Input v-model="formItem.roleDesc" placeholder="请输入..." clearable></Input>
+        </FormItem>
+      </Form>
+    </Modal>
+
+    <Modal width="40%" v-model="isLook" title="详情" footer-hide>
+      <Form :model="formItem" :label-width="60">
+        <FormItem label="名称">
+          {{mTitle}}
+        </FormItem>
+        <FormItem label="编号">
+          {{mTitle}}
+        </FormItem>
+        <FormItem label="描述">
+          {{mTitle}}
+        </FormItem>
+      </Form>
+    </Modal>
+
+
   </div>
 </template>
 
 <script>
 
-  import {getList} from '@/api/sys/roleApi'
+  import {save, getList} from '@/api/sys/roleApi'
 
   export default {
-    components: {},
+
     data() {
       return {
         search: {
@@ -100,6 +119,14 @@
         size: 16,
         currentPage: 0,
         total: 0,
+        show: false,
+        formItem: {
+          roleCode: "",
+          roleDesc: "",
+          roleName: "",
+        },
+        mTitle: '新增角色',
+        isLook: false
       }
     },
     created() {
@@ -133,7 +160,7 @@
         this.requestData()
       },
       look(item) {
-
+        this.isLook = true
       },
       edit(item) {
 
@@ -143,7 +170,21 @@
       },
       //新增
       add() {
+        this.show = true
+      },
+
+
+      /* 新增和编辑的在下面*/
+      m_ok() {
+        console.log(JSON.stringify(this.formItem))
+        save(JSON.stringify(this.formItem)).then(res => {
+          this.$message.success('保存成功');
+        })
+      },
+      m_cancel() {
+
       }
+
 
     }
   }

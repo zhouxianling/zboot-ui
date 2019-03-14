@@ -14,6 +14,10 @@ import router from './router'
 import '@/icons' // icon
 import '@/permission' // permission control
 
+import iView from 'iview';
+import 'iview/dist/styles/iview.css';
+
+
 /**
  * This project originally used easy-mock to simulate data,
  * but its official service is very unstable,
@@ -25,6 +29,8 @@ import '@/permission' // permission control
 import '../mock' // simulation data
 
 Vue.use(ElementUI)
+Vue.use(iView);
+
 
 Vue.config.productionTip = false
 
