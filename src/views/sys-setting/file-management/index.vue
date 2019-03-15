@@ -137,7 +137,7 @@
         this.page = val;
         this.requestData()
       },
-      look(item) {
+      menuDetail(item) {
 
       },
       edit(item) {

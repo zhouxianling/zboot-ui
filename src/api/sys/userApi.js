@@ -12,3 +12,14 @@ export function getList(params) {
   })
 }
 
+export function save(params) {
+  return request({
+    url: userUrl,
+    method: 'post',
+    data: params,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+}
+

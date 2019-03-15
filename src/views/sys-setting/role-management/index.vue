@@ -6,109 +6,54 @@
       <Input v-model="search.name" class="filter-item" placeholder="名称搜索.." clearable style="width: 200px"/>
       <Button class="filter-item" type="primary" @click="searchData">搜索</Button>
       <Button class="add" type="primary" @click="add">添加</Button>
-
     </div>
 
+    <Table border :columns="columns" :data="tableData"></Table>
 
-    <el-table :data="tableData"
-              border
-              style="width: 100%">
-
-      <el-table-column prop="createTime"
-                       label="创建时间">
-      </el-table-column>
-
-
-      <el-table-column prop="roleName"
-                       label="名称">
-      </el-table-column>
-
-      <el-table-column prop="roleCode"
-                       label="编号">
-      </el-table-column>
-
-      <el-table-column prop="roleDesc"
-                       label="描述">
-      </el-table-column>
-
-      <el-table-column prop="updateTime"
-                       label="更新时间">
-      </el-table-column>
-
-      <el-table-column
-        label="操作">
-        <template slot-scope="scope">
-          <el-button size="mini"
-                     type="primary"
-                     @click="look(scope.row)">
-            查看
-          </el-button>
-          <el-button size="mini"
-                     type="success"
-                     @click="edit(scope.row)">
-            编辑
-          </el-button>
-          <el-button size="mini"
-                     type="danger"
-                     @click="delete(scope.row)">
-            删除
-          </el-button>
-        </template>
-      </el-table-column>
-
-    </el-table>
-
-    <!-- 分页 -->
-    <div class="pagination-container">
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page.sync="currentPage"
-        :page-size="size"
-        layout="total,prev, pager, next, jumper"
-        :total="total">
-      </el-pagination>
-    </div>
+    <Page class="pagination-container" :total="total" :current.sync="currentPage" :page-size="size"
+          @on-change="handleCurrentChange" show-total
+          show-elevator/>
 
     <!--    新增和编辑-->
-    <Modal width="40%" v-model="show" :title="mTitle" @on-ok="m_ok" @on-cancel="m_cancel" ok-text="提交">
-      <Form :model="formItem" :label-width="60">
-        <FormItem label="名称">
-          <Input v-model="formItem.roleName" placeholder="请输入..." clearable=""></Input>
+    <Modal width="40%" v-model="isShow" :title="mTitle" ok-text="提交">
+      <Form ref="formItem" :model="formItem" :label-width="60" :rules="ruleValidate">
+        <FormItem label="名称" prop="roleName">
+          <Input v-model="formItem.roleName" placeholder="请输入名称..." clearable=""></Input>
         </FormItem>
-        <FormItem label="编号">
-          <Input v-model="formItem.roleCode" placeholder="请输入..." clearable></Input>
+        <FormItem label="编号" prop="roleCode">
+          <Input v-model="formItem.roleCode" placeholder="请输入编号..." clearable></Input>
         </FormItem>
         <FormItem label="描述">
-          <Input v-model="formItem.roleDesc" placeholder="请输入..." clearable></Input>
+          <Input v-model="formItem.roleDesc" placeholder="请输入描述..." clearable></Input>
         </FormItem>
       </Form>
+
+      <div slot="footer" class="dialog-footer">
+        <Button type="primary" @click="m_cancel">取 消</Button>
+        <Button type="primary" @click="m_ok('formItem')">确 定</Button>
+      </div>
+
     </Modal>
 
     <Modal width="40%" v-model="isLook" title="详情" footer-hide>
-      <Form :model="formItem" :label-width="60">
-        <FormItem label="名称">
-          {{mTitle}}
-        </FormItem>
-        <FormItem label="编号">
-          {{mTitle}}
-        </FormItem>
-        <FormItem label="描述">
-          {{mTitle}}
-        </FormItem>
+      <Form :model="ruleValidate" :label-width="80">
+        <FormItem label="名称：">{{ruleValidate.roleName}}</FormItem>
+        <FormItem label="编号：">{{ruleValidate.roleCode}}</FormItem>
+        <FormItem label="描述：">{{ruleValidate.roleDesc}}</FormItem>
+        <FormItem label="创建时间：">{{ruleValidate.createTime}}</FormItem>
+        <FormItem label="更新时间：">{{ruleValidate.updateTime}}</FormItem>
+        <FormItem label="所属部门："></FormItem>
       </Form>
     </Modal>
-
-
   </div>
 </template>
 
 <script>
 
-  import {save, getList} from '@/api/sys/roleApi'
+  import {save, getList, deleteRoleById} from '@/api/sys/roleApi'
 
   export default {
-
+    components: {},
     data() {
       return {
         search: {
@@ -119,20 +64,112 @@
         size: 16,
         currentPage: 0,
         total: 0,
-        show: false,
+        isShow: false,
         formItem: {
           roleCode: "",
           roleDesc: "",
           roleName: "",
         },
+        ruleValidate: {
+          roleName: [
+            {required: true, message: '请输入角色名称', trigger: 'blur'},
+          ],
+          roleCode: [
+            {required: true, message: '请输入角色编号', trigger: 'blur'}
+          ],
+        },
         mTitle: '新增角色',
-        isLook: false
+        isLook: false,
+        columns: [
+          {
+            title: '名称',
+            key: 'roleName',
+            render: (h, params) => {
+              return h('div', [
+                h('Icon', {
+                  props: {
+                    type: 'person'
+                  }
+                }),
+                h('strong', params.row.roleName)
+              ]);
+            }
+          },
+          {
+            title: '编号',
+            key: 'roleCode'
+          },
+          {
+            title: '描述',
+            key: 'roleDesc'
+          },
+          {
+            title: '创建时间',
+            key: 'createTime'
+          },
+          {
+            title: '更新时间',
+            key: 'updateTime'
+          },
+          {
+            title: '操作',
+            key: 'action',
+            width: 200,
+            align: 'center',
+            render: (h, params) => {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'primary',
+                    size: 'small'
+                  },
+                  style: {
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.menuDetail(params.row)
+                    }
+                  }
+                }, '查看'),
+
+                h('Button', {
+                  props: {
+                    type: 'primary',
+                    size: 'small'
+                  },
+                  style: {
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+
+                    }
+                  }
+                }, '编辑'),
+
+                h('Button', {
+                  props: {
+                    type: 'error',
+                    size: 'small'
+                  },
+                  on: {
+                    click: () => {
+                      this.deleteMenuById(params.row.id)
+                    }
+                  }
+                }, '删除')
+              ]);
+            }
+          }
+        ],
       }
     },
     created() {
       this.requestData();
     },
     methods: {
+      //获取列表数据
       requestData() {
         let params = {
           roleName: this.search.name,
@@ -147,45 +184,56 @@
           },
         );
       },
-      /* 搜索方法 */
+
+      // 搜索方法
       searchData() {
         this.requestData();
       },
-      handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
-      },
+
       handleCurrentChange(val) {
-        console.log(`当前页: ${val}`);
         this.page = val;
         this.requestData()
       },
-      look(item) {
+      //详情
+      menuDetail(item) {
         this.isLook = true
+        this.ruleValidate = item
       },
       edit(item) {
 
       },
-      delete(item) {
-
+      //删除
+      deleteMenuById(item) {
+        this.$Modal.confirm({
+          title: '提示',
+          content: '确定删除吗？',
+          onOk: () => {
+            deleteRoleById(item).then(res => {
+              this.requestData()
+              this.$message.success(res.msg)
+            })
+          }
+        })
       },
       //新增
       add() {
-        this.show = true
+        this.isShow = true
       },
-
-
-      /* 新增和编辑的在下面*/
-      m_ok() {
-        console.log(JSON.stringify(this.formItem))
-        save(JSON.stringify(this.formItem)).then(res => {
-          this.$message.success('保存成功');
+      // 新增和编辑的在下面
+      m_ok(name) {
+        this.$refs[name].validate((valid) => {
+          if (valid) {
+            save(JSON.stringify(this.formItem)).then(res => {
+              this.m_cancel()
+              this.requestData()
+              this.$message.success(res.msg)
+            })
+          }
         })
       },
       m_cancel() {
-
-      }
-
-
+        this.isShow = false
+      },
     }
   }
 </script>

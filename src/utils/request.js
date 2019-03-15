@@ -60,8 +60,10 @@ service.interceptors.response.use(
     }
   },
   error => {
+    let data = JSON.parse(JSON.stringify(error)).response.data
+    console.log(JSON.parse(JSON.stringify(error)))
     Message({
-      message: '请求出错.',
+      message: data.msg,
       type: 'error',
       duration: 5 * 1000
     })

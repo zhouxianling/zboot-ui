@@ -61,7 +61,7 @@
       }
       return {
         loginForm: {
-          username: 'zxl',
+          username: 'admin',
           password: '123456'
         },
         loginRules: {

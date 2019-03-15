@@ -3,118 +3,171 @@
   <div class="app-container">
     <!-- 过滤条件 -->
     <div class="filter-container">
-      <el-input class="search-input"
-                placeholder="请输入内容"
-                v-model="search.name"
-                clearable>
-      </el-input>
-      <el-button class="filter-item"
-                 type="primary"
-                 icon="el-icon-search"
-                 @click="searchData">搜索
-      </el-button>
-
-      <el-button class="add"
-                 type="primary"
-                 @click="add">添加
-      </el-button>
+      <Input v-model="search.name" class="filter-item" placeholder="名称搜索.." clearable style="width: 200px"/>
+      <Button class="filter-item" type="primary" @click="searchData">搜索</Button>
+      <Button class="add" type="primary" @click="add">添加</Button>
     </div>
 
+    <Table border :columns="columns" :data="tableData"></Table>
+    <Page class="pagination-container" :total="total" :current.sync="currentPage" :page-size="size"
+          @on-change="handleCurrentChange" show-total
+          show-elevator/>
 
-    <el-table :data="tableData"
-              border
-              style="width: 100%">
+    <!--    新增和编辑-->
+    <Modal width="40%" v-model="isShow" :title="mTitle" ok-text="提交">
+      <Form ref="formItem" :model="formItem" :label-width="100" :rules="ruleValidate">
+        <FormItem label="上级：">
+          <Cascader :data="treeData" v-model="value" change-on-select></Cascader>
+        </FormItem>
+        <FormItem label="名称：" prop="name">
+          <Input v-model="formItem.name" placeholder="请输入..." clearable=""></Input>
+        </FormItem>
+        <FormItem label="排序：">
+          <el-input-number size="mini" v-model="formItem.sort"></el-input-number>
+        </FormItem>
+      </Form>
+      <div slot="footer" class="dialog-footer">
+        <Button type="primary" @click="m_cancel">取 消</Button>
+        <Button type="primary" @click="m_ok('formItem')">确 定</Button>
+      </div>
+    </Modal>
 
-      <el-table-column prop="createTime"
-                       label="添加日期">
-      </el-table-column>
 
-      <el-table-column prop="username"
-                       label="账号">
-      </el-table-column>
-
-      <el-table-column prop="realName"
-                       label="真实姓名">
-      </el-table-column>
-
-      <el-table-column prop="phone"
-                       label="电话">
-      </el-table-column>
-
-      <el-table-column prop="dept"
-                       label="部门">
-      </el-table-column>
-
-      <el-table-column prop="role"
-                       label="角色">
-      </el-table-column>
-
-      <el-table-column
-        label="操作">
-        <template slot-scope="scope">
-          <el-button size="mini"
-                     type="primary"
-                     @click="look(scope.row)">
-            查看
-          </el-button>
-          <el-button size="mini"
-                     type="success"
-                     @click="edit(scope.row)">
-            编辑
-          </el-button>
-          <el-button size="mini"
-                     type="danger"
-                     @click="delete(scope.row)">
-            删除
-          </el-button>
-        </template>
-      </el-table-column>
-
-    </el-table>
-
-    <!-- 分页 -->
-    <div class="pagination-container">
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page.sync="currentPage"
-        :page-size="size"
-        layout="total,prev, pager, next, jumper"
-        :total="total">
-      </el-pagination>
-    </div>
-
+    <!--详情-->
+    <Modal width="40%" v-model="isLook" title="详情" footer-hide>
+      <Form :model="ruleValidate" :label-width="80">
+        <FormItem label="父级：">{{ruleValidate.parentId}}</FormItem>
+        <FormItem label="名称：">{{ruleValidate.name}}</FormItem>
+        <FormItem label="创建时间：">{{ruleValidate.createTime}}</FormItem>
+        <FormItem label="更新时间：">{{ruleValidate.updateTime}}</FormItem>
+      </Form>
+    </Modal>
   </div>
 </template>
 
 <script>
-
-  import {getList} from '@/api/sys/userApi'
+  import TreeTable from '@/components/TreeTable'
+  import {save, getList, deleteDeptById, getTreeList} from '@/api/sys/deptApi'
 
   export default {
     components: {
-
+      TreeTable,
     },
     data() {
       return {
         search: {
           name: '',
         },
+        treeData: [],
         tableData: [],
-        username: '',
+        value: [],
         page: 1,
         size: 16,
         currentPage: 0,
         total: 0,
+        isShow: false,
+        isTreeShow: false,
+        formItem: {
+          name: "",
+          parentId: 0,
+          sort: 1,
+        },
+        ruleValidate: {
+          name: [
+            {required: true, message: '请输入名称', trigger: 'blur'},
+          ],
+        },
+        mTitle: '新增',
+        isLook: false,
+        columns: [
+          {
+            title: '名称',
+            key: 'name',
+            render: (h, params) => {
+              return h('div', [
+                h('Icon', {
+                  props: {
+                    type: 'person'
+                  }
+                }),
+                h('strong', params.row.name)
+              ]);
+            }
+          },
+          {
+            title: '父级',
+            key: 'parentId'
+          },
+          {
+            title: '创建时间',
+            key: 'createTime'
+          },
+          {
+            title: '更新时间',
+            key: 'updateTime'
+          },
+          {
+            title: '操作',
+            key: 'action',
+            width: 200,
+            align: 'center',
+            render: (h, params) => {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'primary',
+                    size: 'small'
+                  },
+                  style: {
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+                      this.menuDetail(params.row)
+                    }
+                  }
+                }, '查看'),
+
+                h('Button', {
+                  props: {
+                    type: 'primary',
+                    size: 'small'
+                  },
+                  style: {
+                    marginRight: '5px'
+                  },
+                  on: {
+                    click: () => {
+
+                    }
+                  }
+                }, '编辑'),
+
+                h('Button', {
+                  props: {
+                    type: 'error',
+                    size: 'small'
+                  },
+                  on: {
+                    click: () => {
+                      this.deleteMenuById(params.row.id)
+                    }
+                  }
+                }, '删除')
+              ]);
+            }
+          }
+        ],
       }
     },
     created() {
       this.requestData();
     },
     methods: {
+      //获取列表数据
       requestData() {
         let params = {
-          username: this.search.name,
+          name: this.search.name,
           page: this.page,
           size: this.size,
         };
@@ -125,32 +178,64 @@
             this.total = res.total;
           },
         );
-      },
-      /* 搜索方法 */
-      searchData() {
-        this.requestData();
-      },
-      handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
-      },
-      handleCurrentChange(val) {
-        console.log(`当前页: ${val}`);
-        this.page = val;
-        this.requestData()
-      },
-      look(item) {
 
+
+      },
+      //详情
+      menuDetail(item) {
+        this.isLook = true
+        this.ruleValidate = item
       },
       edit(item) {
 
       },
-      delete(item) {
-
+      //删除
+      deleteMenuById(item) {
+        this.$Modal.confirm({
+          title: '提示',
+          content: '确定删除吗？',
+          onOk: () => {
+            deleteDeptById(item);
+            this.requestData();
+          }
+        })
       },
       //新增
       add() {
+        getTreeList().then(res => {
+          this.treeData = res;
+        });
+        this.isShow = true
+      },
+      // 新增和编辑的在下面
+      m_ok(name) {
+        if (this.value.length > 0) {
+          console.log('上级ID为', this.value[this.value.length - 1]);
+          this.formItem.parentId = this.value[this.value.length - 1];
+        }
+        console.log(JSON.stringify(this.formItem));
 
-      }
+        this.$refs[name].validate((valid) => {
+          if (valid) {
+            save(JSON.stringify(this.formItem)).then(res => {
+              this.m_cancel();
+              this.requestData();
+              this.formItem = '';
+              this.$message.success(res.msg);
+            })
+          }
+        })
+      },
+      m_cancel() {
+        this.isShow = false
+      },
+      searchData() {
+        this.requestData();
+      },
+      handleCurrentChange(val) {
+        this.page = val;
+        this.requestData()
+      },
 
     }
   }

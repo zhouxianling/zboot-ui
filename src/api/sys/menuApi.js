@@ -1,12 +1,12 @@
 import request from '@/utils/request'
 import {url, apiUrl} from '@/utils/url'
 
-const roleUrl = apiUrl + '/role';
+const menuUrl = apiUrl + '/menu';
 
-/*新增角色*/
+
 export function save(params) {
   return request({
-    url: roleUrl,
+    url: menuUrl,
     method: 'post',
     data: params,
     headers: {
@@ -15,17 +15,26 @@ export function save(params) {
   })
 }
 
+
 export function getList(params) {
   return request({
-    url: roleUrl + '/page',
+    url: menuUrl + '/page',
     method: 'get',
     params,
   })
 }
 
+export function getTreeList() {
+  return request({
+    url: menuUrl + '/tree',
+    method: 'get'
+  })
+}
+
+
 export function deleteRoleById(roleId) {
   return request({
-    url: roleUrl + '/' + roleId,
+    url: menuUrl + '/' + roleId,
     method: 'delete',
   })
 }
