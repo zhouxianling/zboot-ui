@@ -12,9 +12,6 @@ import Layout from '../views/layout/Layout'
 /* Router Modules */
 import home from './modules/home';
 import setting from './modules/setting';
-import paper from './modules/paper';
-import analysis from './modules/analysis';
-import question from './modules/question';
 
 
 /* 所有权限通用路由表 如首页和登录页和一些不用权限的公用页面*/
@@ -56,9 +53,7 @@ export const constantRouterMap = [
   },
   home,
   setting,
-  question,
-  analysis,
-  paper,
+
   {path: '*', redirect: '/home/index', hidden: true},
 
 ]

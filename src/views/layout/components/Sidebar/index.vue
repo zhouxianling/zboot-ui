@@ -9,7 +9,6 @@
       :active-text-color="variables.menuActiveText"
       mode="vertical">
       <sidebar-item v-for="route in routers" :key="route.path" :item="route" :base-path="route.path"/>
-
     </el-menu>
   </el-scrollbar>
 </template>
@@ -37,7 +36,6 @@
 </script>
 
 <style scoped>
-
 
 
 </style>

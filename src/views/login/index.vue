@@ -3,7 +3,7 @@
 
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on"
              label-position="left">
-      <h3 class="title">{{title}}</h3>
+      <h4 class="title">{{title}}</h4>
       <el-form-item prop="username">
         <span class="svg-container">
           <svg-icon icon-class="user"/>
@@ -30,11 +30,6 @@
           登 录
         </el-button>
       </el-form-item>
-      <div class="tips">
-        <span>仰天大笑出门去，我辈岂是蓬蒿人。</span>
-      </div>
-
-
     </el-form>
   </div>
 </template>
@@ -99,13 +94,13 @@
       handleLogin() {
         this.$refs.loginForm.validate(valid => {
           if (valid) {
-            this.loading = true
+            this.loading = true;
             this.$store.dispatch('Login', this.loginForm).then(() => {
-              this.loading = false
+              this.loading = false;
               this.$message.success('登录成功.');
               this.$router.push({name: 'home'})
             }).catch(err => {
-              this.loading = false
+              this.loading = false;
               this.$message.error(err); //登录失败提示错误
             })
           } else {
@@ -129,15 +124,15 @@
       height: 47px;
       width: 85%;
       input {
-        border: 0px;
+        border: 0;
         -webkit-appearance: none;
-        border-radius: 0px;
-        padding: 12px 5px 12px 15px;
+        border-radius: 0;
+        padding: 12px 5px 12px 12px;
         color: $text_color;
         height: 47px;
         &:-webkit-autofill {
-          -webkit-box-shadow: 0 0 0px 1000px $bg inset !important;
-          -webkit-text-fill-color: #fff !important;
+          -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+          -webkit-text-fill-color: $text_color !important;
         }
       }
     }

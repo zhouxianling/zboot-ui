@@ -23,7 +23,7 @@ export function getList(params) {
   })
 }
 
-export function deleteRoleById(roleId) {
+export function deleteById(roleId) {
   return request({
     url: roleUrl + '/' + roleId,
     method: 'delete',
