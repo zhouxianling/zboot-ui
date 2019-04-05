@@ -3,9 +3,9 @@
     <el-container class="m-el-container">
       <el-header>
         <el-button-group>
-          <el-button type="primary" @click="btnClick('1')">添加</el-button>
-          <el-button type="primary" @click="btnClick('2')">编辑</el-button>
-          <el-button type="primary" @click="btnClick('3')">删除</el-button>
+          <el-button type="primary" @click="btnClick('save')">添加</el-button>
+          <el-button type="primary" @click="btnClick('update')">编辑</el-button>
+          <el-button type="primary" @click="btnClick('delete')">删除</el-button>
         </el-button-group>
       </el-header>
 

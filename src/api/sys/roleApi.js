@@ -30,6 +30,13 @@ export function deleteById(roleId) {
   })
 }
 
+export function findRoleByUserId(userId) {
+  return request({
+    url: roleUrl + '/findRoleByUserId/' + userId,
+    method: 'get',
+  })
+}
+
 
 
 
