@@ -74,7 +74,9 @@
           },
         );
       },
-      edit() {
+      //todo 更新
+      update(item) {
+
 
       },
       //删除

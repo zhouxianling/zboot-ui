@@ -3,16 +3,16 @@
     <el-container class="m-el-container">
       <el-header>
         <el-button-group>
-          <el-button type="primary" @click="btnClick('1')">添加</el-button>
-          <el-button type="primary" @click="btnClick('2')">编辑</el-button>
-          <el-button type="primary" @click="btnClick('3')">删除</el-button>
+          <el-button type="primary" @click="btnClick('save')">添加</el-button>
+          <el-button type="primary" @click="btnClick('update')">编辑</el-button>
+          <el-button type="primary" @click="btnClick('delete')">删除</el-button>
         </el-button-group>
       </el-header>
 
       <el-container direction="horizontal">
         <!--左侧侧边栏-->
         <el-aside class="m-el-aside" width="400px">
-          <el-tree :data="tableData" @node-click="handleNodeClick"></el-tree>
+          <el-tree :data="treeData" @node-click="handleNodeClick"></el-tree>
         </el-aside>
         <!--主要区域容器-->
         <el-main class="m-el-main">
@@ -38,13 +38,10 @@
               <el-input v-model="formData.path" placeholder="输入前端地址" :disabled="isDisabled"></el-input>
             </el-form-item>
           </el-form>
-
           <el-container direction="horizontal" v-show="btnShow">
             <el-button type="primary" @click="saveOrUpdate('form')" style="margin-left: 30px">{{btnName}}</el-button>
             <el-button @click="btnCancel">取消</el-button>
           </el-container>
-
-
         </el-main>
       </el-container>
     </el-container>
@@ -52,7 +49,7 @@
 </template>
 
 <script>
-  import {save, getList, deleteRoleById, getTreeList} from '@/api/sys/menuApi'
+  import {saveOrUpdate, getMenuTree, deleteMenuById, findMenuIdsByRoleId} from '@/api/sys/menuApi'
 
   export default {
     data() {
@@ -88,16 +85,12 @@
       this.requestData();
     },
     methods: {
-      //获取列表数据
       requestData() {
-        getTreeList().then(
+        getMenuTree().then(
           res => {
-            this.tableData = res;
+            this.treeData = res;
           },
         );
-      },
-      edit() {
-
       },
       //删除
       delete(item) {
@@ -105,9 +98,9 @@
           title: '提示',
           content: '确定删除吗？',
           onOk: () => {
-            deleteRoleById(item).then(res => {
+            deleteMenuById(item).then(res => {
               this.requestData();
-              this.$message.success(res.msg)
+              this.$message.success("删除成功")
             })
           }
         })
@@ -122,7 +115,7 @@
       btnClick(type) {
         switch (type) {
           //save
-          case '1':
+          case 'save':
             this.isDisabled = false;
             this.btnName = '保存';
             this.btnShow = true;
@@ -131,13 +124,13 @@
             this.formData.parentId = parentId;
             break;
           //update
-          case '2':
+          case 'update':
             this.isDisabled = false;
             this.btnName = '更新';
             this.btnShow = true;
             break;
           //delete
-          case '3':
+          case 'delete':
             this.delete(this.formData.id);
             break
         }
@@ -145,7 +138,7 @@
       saveOrUpdate(item) {
         this.$refs[item].validate((valid) => {
           if (valid) {
-            save(JSON.stringify(this.formData)).then(res => {
+            saveOrUpdate(JSON.stringify(this.formData)).then(res => {
               this.requestData();
               this.$message.success('保存成功');
             })
